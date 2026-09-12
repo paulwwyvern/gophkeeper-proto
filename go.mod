@@ -1,1 +1,1 @@
-module gophkeeper-proto
+module github.com/paulwwyvern/gophkeeper-proto

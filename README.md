@@ -1,0 +1,1 @@
+## В этом репозитории содержатся только proto контракты для репозиториев gophkeeper-client и gophkeeper-server

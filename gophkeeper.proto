@@ -1,0 +1,140 @@
+syntax = "proto3";
+
+package paulwwyvern.gophkeeper_proto;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/paulwwyvern/gophkeeper-proto/";
+
+service GophkeeperService {
+  rpc CreateUser(User) returns (CreateUserResponse);
+  rpc Login(LoginRequest) returns (LoginResponse);
+
+  // методы защищённые auth middleware
+  rpc GetUser(google.protobuf.Empty) returns (User);
+  rpc PushChanges(PushChangesRequest) returns (PushChangesResponse);
+  rpc PullChanges(PullChangesRequest) returns (PullChangesResponse);
+
+  rpc UploadFileQuery(UploadFileQueryRequest) returns (UploadFileQueryResponse);
+  rpc UploadFileStatus(UploadFileStatusRequest) returns (UploadFileStatusResponse);
+  rpc UploadFile(stream UploadFileChunk) returns (UploadFileResponse);
+
+  rpc DownloadFileQuery(UploadFileQueryRequest) returns (DownloadFileQueryResponse);
+  rpc DownloadFile(DownloadFileRequest) returns (stream DownloadFileChunk);
+}
+
+
+message User {
+  string login = 1;
+  bytes salt = 2;
+  bytes auth_key = 3;
+  bytes vaultKey = 4;
+  bytes vaultKey_nonce = 5;
+}
+
+
+message VaultItem {
+  bytes id = 1;
+  int32 label = 2;
+  string title = 3;
+  string description = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+
+  bytes encrypted_nonce = 8;
+  bytes encrypted = 9;
+}
+
+
+message CreateUserResponse {
+  int32 id = 1;
+}
+
+message LoginRequest {
+  string login = 1;
+  bytes authKey = 2;
+}
+
+message LoginResponse {
+  bytes token = 1;
+}
+
+message PushChangesRequest {
+  repeated VaultItem items = 1;
+}
+
+message PushChangesResponse {
+  google.protobuf.Timestamp sync_time = 1;
+}
+
+message PullChangesRequest {
+  google.protobuf.Timestamp last_sync_time = 1;
+
+  int32 offset = 2;
+}
+
+message PullChangesResponse {
+  repeated VaultItem items = 1;
+
+  bool has_more = 3;
+}
+
+
+message UploadFileChunk {
+  int64 file_id = 1;
+  int64 offset = 2;
+  bytes data = 3;
+  bool is_last = 4;
+}
+
+
+message UploadFileResponse {
+  bool success = 1;
+  string message = 2;
+  int64 bytes_written = 3;
+}
+
+
+message UploadFileQueryRequest {
+  string file_name = 2;
+
+  int64 file_size = 3;
+}
+
+message UploadFileQueryResponse {
+  int32 file_id = 1;
+}
+
+message UploadFileStatusRequest {
+  int32 file_id = 1;
+}
+
+message UploadFileStatusResponse {
+  int64 bytes_received = 1;
+}
+
+
+
+message DownloadFileChunk {
+  int64 offset = 2;
+  bytes data = 3;
+  bool is_last = 4;
+}
+
+
+message DownloadFileRequest {
+  int64 file_id = 1;
+  int64 bytes_written = 3;
+}
+
+
+message DownloadFileQueryRequest {
+  int32 file_id = 1;
+}
+
+message DownloadFileQueryResponse {
+  string file_name = 2;
+
+  int64 file_size = 3;
+}

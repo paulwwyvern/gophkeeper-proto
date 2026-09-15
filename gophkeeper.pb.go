@@ -291,6 +291,7 @@ type LoginRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Login         string                 `protobuf:"bytes,1,opt,name=login,proto3" json:"login,omitempty"`
 	AuthKey       []byte                 `protobuf:"bytes,2,opt,name=authKey,proto3" json:"authKey,omitempty"`
+	DeviceId      []byte                 `protobuf:"bytes,3,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -335,6 +336,13 @@ func (x *LoginRequest) GetLogin() string {
 func (x *LoginRequest) GetAuthKey() []byte {
 	if x != nil {
 		return x.AuthKey
+	}
+	return nil
+}
+
+func (x *LoginRequest) GetDeviceId() []byte {
+	if x != nil {
+		return x.DeviceId
 	}
 	return nil
 }
@@ -859,6 +867,58 @@ func (x *UploadFileStatusResponse) GetBytesReceived() int64 {
 	return 0
 }
 
+type DownloadFileRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	FileId        int32                  `protobuf:"varint,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
+	BytesWritten  int64                  `protobuf:"varint,3,opt,name=bytes_written,json=bytesWritten,proto3" json:"bytes_written,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DownloadFileRequest) Reset() {
+	*x = DownloadFileRequest{}
+	mi := &file_gophkeeper_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DownloadFileRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DownloadFileRequest) ProtoMessage() {}
+
+func (x *DownloadFileRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_gophkeeper_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DownloadFileRequest.ProtoReflect.Descriptor instead.
+func (*DownloadFileRequest) Descriptor() ([]byte, []int) {
+	return file_gophkeeper_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *DownloadFileRequest) GetFileId() int32 {
+	if x != nil {
+		return x.FileId
+	}
+	return 0
+}
+
+func (x *DownloadFileRequest) GetBytesWritten() int64 {
+	if x != nil {
+		return x.BytesWritten
+	}
+	return 0
+}
+
 type DownloadFileChunk struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Offset        int64                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
@@ -870,7 +930,7 @@ type DownloadFileChunk struct {
 
 func (x *DownloadFileChunk) Reset() {
 	*x = DownloadFileChunk{}
-	mi := &file_gophkeeper_proto_msgTypes[15]
+	mi := &file_gophkeeper_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -882,7 +942,7 @@ func (x *DownloadFileChunk) String() string {
 func (*DownloadFileChunk) ProtoMessage() {}
 
 func (x *DownloadFileChunk) ProtoReflect() protoreflect.Message {
-	mi := &file_gophkeeper_proto_msgTypes[15]
+	mi := &file_gophkeeper_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -895,7 +955,7 @@ func (x *DownloadFileChunk) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DownloadFileChunk.ProtoReflect.Descriptor instead.
 func (*DownloadFileChunk) Descriptor() ([]byte, []int) {
-	return file_gophkeeper_proto_rawDescGZIP(), []int{15}
+	return file_gophkeeper_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *DownloadFileChunk) GetOffset() int64 {
@@ -917,58 +977,6 @@ func (x *DownloadFileChunk) GetIsLast() bool {
 		return x.IsLast
 	}
 	return false
-}
-
-type DownloadFileRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	FileId        int64                  `protobuf:"varint,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
-	BytesWritten  int64                  `protobuf:"varint,3,opt,name=bytes_written,json=bytesWritten,proto3" json:"bytes_written,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DownloadFileRequest) Reset() {
-	*x = DownloadFileRequest{}
-	mi := &file_gophkeeper_proto_msgTypes[16]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DownloadFileRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DownloadFileRequest) ProtoMessage() {}
-
-func (x *DownloadFileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gophkeeper_proto_msgTypes[16]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DownloadFileRequest.ProtoReflect.Descriptor instead.
-func (*DownloadFileRequest) Descriptor() ([]byte, []int) {
-	return file_gophkeeper_proto_rawDescGZIP(), []int{16}
-}
-
-func (x *DownloadFileRequest) GetFileId() int64 {
-	if x != nil {
-		return x.FileId
-	}
-	return 0
-}
-
-func (x *DownloadFileRequest) GetBytesWritten() int64 {
-	if x != nil {
-		return x.BytesWritten
-	}
-	return 0
 }
 
 type DownloadFileQueryRequest struct {
@@ -1092,10 +1100,11 @@ const file_gophkeeper_proto_rawDesc = "" +
 	"\x04user\x18\x01 \x01(\v2\".paulwwyvern.gophkeeper_proto.UserR\x04user\x12\x19\n" +
 	"\bauth_key\x18\x02 \x01(\fR\aauthKey\"$\n" +
 	"\x12CreateUserResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x05R\x02id\">\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\"[\n" +
 	"\fLoginRequest\x12\x14\n" +
 	"\x05login\x18\x01 \x01(\tR\x05login\x12\x18\n" +
-	"\aauthKey\x18\x02 \x01(\fR\aauthKey\"]\n" +
+	"\aauthKey\x18\x02 \x01(\fR\aauthKey\x12\x1b\n" +
+	"\tdevice_id\x18\x03 \x01(\fR\bdeviceId\"]\n" +
 	"\rLoginResponse\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\fR\x05token\x126\n" +
 	"\x04user\x18\x02 \x01(\v2\".paulwwyvern.gophkeeper_proto.UserR\x04user\"S\n" +
@@ -1125,22 +1134,22 @@ const file_gophkeeper_proto_rawDesc = "" +
 	"\x17UploadFileStatusRequest\x12\x17\n" +
 	"\afile_id\x18\x01 \x01(\x05R\x06fileId\"A\n" +
 	"\x18UploadFileStatusResponse\x12%\n" +
-	"\x0ebytes_received\x18\x01 \x01(\x03R\rbytesReceived\"X\n" +
+	"\x0ebytes_received\x18\x01 \x01(\x03R\rbytesReceived\"S\n" +
+	"\x13DownloadFileRequest\x12\x17\n" +
+	"\afile_id\x18\x01 \x01(\x05R\x06fileId\x12#\n" +
+	"\rbytes_written\x18\x03 \x01(\x03R\fbytesWritten\"X\n" +
 	"\x11DownloadFileChunk\x12\x16\n" +
 	"\x06offset\x18\x02 \x01(\x03R\x06offset\x12\x12\n" +
 	"\x04data\x18\x03 \x01(\fR\x04data\x12\x17\n" +
-	"\ais_last\x18\x04 \x01(\bR\x06isLast\"S\n" +
-	"\x13DownloadFileRequest\x12\x17\n" +
-	"\afile_id\x18\x01 \x01(\x03R\x06fileId\x12#\n" +
-	"\rbytes_written\x18\x03 \x01(\x03R\fbytesWritten\"3\n" +
+	"\ais_last\x18\x04 \x01(\bR\x06isLast\"3\n" +
 	"\x18DownloadFileQueryRequest\x12\x17\n" +
 	"\afile_id\x18\x01 \x01(\x05R\x06fileId\"U\n" +
 	"\x19DownloadFileQueryResponse\x12\x1b\n" +
 	"\tfile_name\x18\x02 \x01(\tR\bfileName\x12\x1b\n" +
-	"\tfile_size\x18\x03 \x01(\x03R\bfileSize2\xdf\b\n" +
-	"\x11GophkeeperService\x12b\n" +
+	"\tfile_size\x18\x03 \x01(\x03R\bfileSize2\xec\b\n" +
+	"\x11GophkeeperService\x12o\n" +
 	"\n" +
-	"CreateUser\x12\".paulwwyvern.gophkeeper_proto.User\x1a0.paulwwyvern.gophkeeper_proto.CreateUserResponse\x12`\n" +
+	"CreateUser\x12/.paulwwyvern.gophkeeper_proto.CreateUserRequest\x1a0.paulwwyvern.gophkeeper_proto.CreateUserResponse\x12`\n" +
 	"\x05Login\x12*.paulwwyvern.gophkeeper_proto.LoginRequest\x1a+.paulwwyvern.gophkeeper_proto.LoginResponse\x12E\n" +
 	"\aGetUser\x12\x16.google.protobuf.Empty\x1a\".paulwwyvern.gophkeeper_proto.User\x12W\n" +
 	"\vPushChanges\x120.paulwwyvern.gophkeeper_proto.PushChangesRequest\x1a\x16.google.protobuf.Empty\x12r\n" +
@@ -1181,8 +1190,8 @@ var file_gophkeeper_proto_goTypes = []any{
 	(*UploadFileQueryResponse)(nil),   // 12: paulwwyvern.gophkeeper_proto.UploadFileQueryResponse
 	(*UploadFileStatusRequest)(nil),   // 13: paulwwyvern.gophkeeper_proto.UploadFileStatusRequest
 	(*UploadFileStatusResponse)(nil),  // 14: paulwwyvern.gophkeeper_proto.UploadFileStatusResponse
-	(*DownloadFileChunk)(nil),         // 15: paulwwyvern.gophkeeper_proto.DownloadFileChunk
-	(*DownloadFileRequest)(nil),       // 16: paulwwyvern.gophkeeper_proto.DownloadFileRequest
+	(*DownloadFileRequest)(nil),       // 15: paulwwyvern.gophkeeper_proto.DownloadFileRequest
+	(*DownloadFileChunk)(nil),         // 16: paulwwyvern.gophkeeper_proto.DownloadFileChunk
 	(*DownloadFileQueryRequest)(nil),  // 17: paulwwyvern.gophkeeper_proto.DownloadFileQueryRequest
 	(*DownloadFileQueryResponse)(nil), // 18: paulwwyvern.gophkeeper_proto.DownloadFileQueryResponse
 	(*timestamppb.Timestamp)(nil),     // 19: google.protobuf.Timestamp
@@ -1197,7 +1206,7 @@ var file_gophkeeper_proto_depIdxs = []int32{
 	19, // 5: paulwwyvern.gophkeeper_proto.PullChangesRequest.last_sync_time:type_name -> google.protobuf.Timestamp
 	1,  // 6: paulwwyvern.gophkeeper_proto.PullChangesResponse.items:type_name -> paulwwyvern.gophkeeper_proto.VaultItem
 	19, // 7: paulwwyvern.gophkeeper_proto.PullChangesResponse.sync_time:type_name -> google.protobuf.Timestamp
-	0,  // 8: paulwwyvern.gophkeeper_proto.GophkeeperService.CreateUser:input_type -> paulwwyvern.gophkeeper_proto.User
+	2,  // 8: paulwwyvern.gophkeeper_proto.GophkeeperService.CreateUser:input_type -> paulwwyvern.gophkeeper_proto.CreateUserRequest
 	4,  // 9: paulwwyvern.gophkeeper_proto.GophkeeperService.Login:input_type -> paulwwyvern.gophkeeper_proto.LoginRequest
 	20, // 10: paulwwyvern.gophkeeper_proto.GophkeeperService.GetUser:input_type -> google.protobuf.Empty
 	6,  // 11: paulwwyvern.gophkeeper_proto.GophkeeperService.PushChanges:input_type -> paulwwyvern.gophkeeper_proto.PushChangesRequest
@@ -1206,7 +1215,7 @@ var file_gophkeeper_proto_depIdxs = []int32{
 	13, // 14: paulwwyvern.gophkeeper_proto.GophkeeperService.UploadFileStatus:input_type -> paulwwyvern.gophkeeper_proto.UploadFileStatusRequest
 	9,  // 15: paulwwyvern.gophkeeper_proto.GophkeeperService.UploadFile:input_type -> paulwwyvern.gophkeeper_proto.UploadFileChunk
 	17, // 16: paulwwyvern.gophkeeper_proto.GophkeeperService.DownloadFileQuery:input_type -> paulwwyvern.gophkeeper_proto.DownloadFileQueryRequest
-	16, // 17: paulwwyvern.gophkeeper_proto.GophkeeperService.DownloadFile:input_type -> paulwwyvern.gophkeeper_proto.DownloadFileRequest
+	15, // 17: paulwwyvern.gophkeeper_proto.GophkeeperService.DownloadFile:input_type -> paulwwyvern.gophkeeper_proto.DownloadFileRequest
 	3,  // 18: paulwwyvern.gophkeeper_proto.GophkeeperService.CreateUser:output_type -> paulwwyvern.gophkeeper_proto.CreateUserResponse
 	5,  // 19: paulwwyvern.gophkeeper_proto.GophkeeperService.Login:output_type -> paulwwyvern.gophkeeper_proto.LoginResponse
 	0,  // 20: paulwwyvern.gophkeeper_proto.GophkeeperService.GetUser:output_type -> paulwwyvern.gophkeeper_proto.User
@@ -1216,7 +1225,7 @@ var file_gophkeeper_proto_depIdxs = []int32{
 	14, // 24: paulwwyvern.gophkeeper_proto.GophkeeperService.UploadFileStatus:output_type -> paulwwyvern.gophkeeper_proto.UploadFileStatusResponse
 	10, // 25: paulwwyvern.gophkeeper_proto.GophkeeperService.UploadFile:output_type -> paulwwyvern.gophkeeper_proto.UploadFileResponse
 	18, // 26: paulwwyvern.gophkeeper_proto.GophkeeperService.DownloadFileQuery:output_type -> paulwwyvern.gophkeeper_proto.DownloadFileQueryResponse
-	15, // 27: paulwwyvern.gophkeeper_proto.GophkeeperService.DownloadFile:output_type -> paulwwyvern.gophkeeper_proto.DownloadFileChunk
+	16, // 27: paulwwyvern.gophkeeper_proto.GophkeeperService.DownloadFile:output_type -> paulwwyvern.gophkeeper_proto.DownloadFileChunk
 	18, // [18:28] is the sub-list for method output_type
 	8,  // [8:18] is the sub-list for method input_type
 	8,  // [8:8] is the sub-list for extension type_name

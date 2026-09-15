@@ -36,7 +36,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GophkeeperServiceClient interface {
-	CreateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*CreateUserResponse, error)
+	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	// методы защищённые auth middleware
 	GetUser(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*User, error)
@@ -57,7 +57,7 @@ func NewGophkeeperServiceClient(cc grpc.ClientConnInterface) GophkeeperServiceCl
 	return &gophkeeperServiceClient{cc}
 }
 
-func (c *gophkeeperServiceClient) CreateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*CreateUserResponse, error) {
+func (c *gophkeeperServiceClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateUserResponse)
 	err := c.cc.Invoke(ctx, GophkeeperService_CreateUser_FullMethodName, in, out, cOpts...)
@@ -173,7 +173,7 @@ type GophkeeperService_DownloadFileClient = grpc.ServerStreamingClient[DownloadF
 // All implementations must embed UnimplementedGophkeeperServiceServer
 // for forward compatibility.
 type GophkeeperServiceServer interface {
-	CreateUser(context.Context, *User) (*CreateUserResponse, error)
+	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	// методы защищённые auth middleware
 	GetUser(context.Context, *emptypb.Empty) (*User, error)
@@ -194,7 +194,7 @@ type GophkeeperServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedGophkeeperServiceServer struct{}
 
-func (UnimplementedGophkeeperServiceServer) CreateUser(context.Context, *User) (*CreateUserResponse, error) {
+func (UnimplementedGophkeeperServiceServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateUser not implemented")
 }
 func (UnimplementedGophkeeperServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
@@ -246,7 +246,7 @@ func RegisterGophkeeperServiceServer(s grpc.ServiceRegistrar, srv GophkeeperServ
 }
 
 func _GophkeeperService_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(User)
+	in := new(CreateUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -258,7 +258,7 @@ func _GophkeeperService_CreateUser_Handler(srv interface{}, ctx context.Context,
 		FullMethod: GophkeeperService_CreateUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GophkeeperServiceServer).CreateUser(ctx, req.(*User))
+		return srv.(GophkeeperServiceServer).CreateUser(ctx, req.(*CreateUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

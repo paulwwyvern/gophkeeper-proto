@@ -40,12 +40,12 @@ type GophkeeperServiceClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	// методы защищённые auth middleware
 	GetUser(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*User, error)
-	PushChanges(ctx context.Context, in *PushChangesRequest, opts ...grpc.CallOption) (*PushChangesResponse, error)
+	PushChanges(ctx context.Context, in *PushChangesRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	PullChanges(ctx context.Context, in *PullChangesRequest, opts ...grpc.CallOption) (*PullChangesResponse, error)
 	UploadFileQuery(ctx context.Context, in *UploadFileQueryRequest, opts ...grpc.CallOption) (*UploadFileQueryResponse, error)
 	UploadFileStatus(ctx context.Context, in *UploadFileStatusRequest, opts ...grpc.CallOption) (*UploadFileStatusResponse, error)
 	UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadFileChunk, UploadFileResponse], error)
-	DownloadFileQuery(ctx context.Context, in *UploadFileQueryRequest, opts ...grpc.CallOption) (*DownloadFileQueryResponse, error)
+	DownloadFileQuery(ctx context.Context, in *DownloadFileQueryRequest, opts ...grpc.CallOption) (*DownloadFileQueryResponse, error)
 	DownloadFile(ctx context.Context, in *DownloadFileRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadFileChunk], error)
 }
 
@@ -87,9 +87,9 @@ func (c *gophkeeperServiceClient) GetUser(ctx context.Context, in *emptypb.Empty
 	return out, nil
 }
 
-func (c *gophkeeperServiceClient) PushChanges(ctx context.Context, in *PushChangesRequest, opts ...grpc.CallOption) (*PushChangesResponse, error) {
+func (c *gophkeeperServiceClient) PushChanges(ctx context.Context, in *PushChangesRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(PushChangesResponse)
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, GophkeeperService_PushChanges_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -140,7 +140,7 @@ func (c *gophkeeperServiceClient) UploadFile(ctx context.Context, opts ...grpc.C
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type GophkeeperService_UploadFileClient = grpc.ClientStreamingClient[UploadFileChunk, UploadFileResponse]
 
-func (c *gophkeeperServiceClient) DownloadFileQuery(ctx context.Context, in *UploadFileQueryRequest, opts ...grpc.CallOption) (*DownloadFileQueryResponse, error) {
+func (c *gophkeeperServiceClient) DownloadFileQuery(ctx context.Context, in *DownloadFileQueryRequest, opts ...grpc.CallOption) (*DownloadFileQueryResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DownloadFileQueryResponse)
 	err := c.cc.Invoke(ctx, GophkeeperService_DownloadFileQuery_FullMethodName, in, out, cOpts...)
@@ -177,12 +177,12 @@ type GophkeeperServiceServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	// методы защищённые auth middleware
 	GetUser(context.Context, *emptypb.Empty) (*User, error)
-	PushChanges(context.Context, *PushChangesRequest) (*PushChangesResponse, error)
+	PushChanges(context.Context, *PushChangesRequest) (*emptypb.Empty, error)
 	PullChanges(context.Context, *PullChangesRequest) (*PullChangesResponse, error)
 	UploadFileQuery(context.Context, *UploadFileQueryRequest) (*UploadFileQueryResponse, error)
 	UploadFileStatus(context.Context, *UploadFileStatusRequest) (*UploadFileStatusResponse, error)
 	UploadFile(grpc.ClientStreamingServer[UploadFileChunk, UploadFileResponse]) error
-	DownloadFileQuery(context.Context, *UploadFileQueryRequest) (*DownloadFileQueryResponse, error)
+	DownloadFileQuery(context.Context, *DownloadFileQueryRequest) (*DownloadFileQueryResponse, error)
 	DownloadFile(*DownloadFileRequest, grpc.ServerStreamingServer[DownloadFileChunk]) error
 	mustEmbedUnimplementedGophkeeperServiceServer()
 }
@@ -203,7 +203,7 @@ func (UnimplementedGophkeeperServiceServer) Login(context.Context, *LoginRequest
 func (UnimplementedGophkeeperServiceServer) GetUser(context.Context, *emptypb.Empty) (*User, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUser not implemented")
 }
-func (UnimplementedGophkeeperServiceServer) PushChanges(context.Context, *PushChangesRequest) (*PushChangesResponse, error) {
+func (UnimplementedGophkeeperServiceServer) PushChanges(context.Context, *PushChangesRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method PushChanges not implemented")
 }
 func (UnimplementedGophkeeperServiceServer) PullChanges(context.Context, *PullChangesRequest) (*PullChangesResponse, error) {
@@ -218,7 +218,7 @@ func (UnimplementedGophkeeperServiceServer) UploadFileStatus(context.Context, *U
 func (UnimplementedGophkeeperServiceServer) UploadFile(grpc.ClientStreamingServer[UploadFileChunk, UploadFileResponse]) error {
 	return status.Error(codes.Unimplemented, "method UploadFile not implemented")
 }
-func (UnimplementedGophkeeperServiceServer) DownloadFileQuery(context.Context, *UploadFileQueryRequest) (*DownloadFileQueryResponse, error) {
+func (UnimplementedGophkeeperServiceServer) DownloadFileQuery(context.Context, *DownloadFileQueryRequest) (*DownloadFileQueryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DownloadFileQuery not implemented")
 }
 func (UnimplementedGophkeeperServiceServer) DownloadFile(*DownloadFileRequest, grpc.ServerStreamingServer[DownloadFileChunk]) error {
@@ -379,7 +379,7 @@ func _GophkeeperService_UploadFile_Handler(srv interface{}, stream grpc.ServerSt
 type GophkeeperService_UploadFileServer = grpc.ClientStreamingServer[UploadFileChunk, UploadFileResponse]
 
 func _GophkeeperService_DownloadFileQuery_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UploadFileQueryRequest)
+	in := new(DownloadFileQueryRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -391,7 +391,7 @@ func _GophkeeperService_DownloadFileQuery_Handler(srv interface{}, ctx context.C
 		FullMethod: GophkeeperService_DownloadFileQuery_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GophkeeperServiceServer).DownloadFileQuery(ctx, req.(*UploadFileQueryRequest))
+		return srv.(GophkeeperServiceServer).DownloadFileQuery(ctx, req.(*DownloadFileQueryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

@@ -557,7 +557,6 @@ func (x *PullChangesResponse) GetHasMore() bool {
 
 type UploadFileChunk struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	FileId        int32                  `protobuf:"varint,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
 	Offset        int64                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
 	Data          []byte                 `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
 	IsLast        bool                   `protobuf:"varint,4,opt,name=is_last,json=isLast,proto3" json:"is_last,omitempty"`
@@ -593,13 +592,6 @@ func (x *UploadFileChunk) ProtoReflect() protoreflect.Message {
 // Deprecated: Use UploadFileChunk.ProtoReflect.Descriptor instead.
 func (*UploadFileChunk) Descriptor() ([]byte, []int) {
 	return file_gophkeeper_proto_rawDescGZIP(), []int{9}
-}
-
-func (x *UploadFileChunk) GetFileId() int32 {
-	if x != nil {
-		return x.FileId
-	}
-	return 0
 }
 
 func (x *UploadFileChunk) GetOffset() int64 {
@@ -738,6 +730,7 @@ func (x *UploadFileQueryRequest) GetFileSize() int64 {
 type UploadFileQueryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	FileId        int32                  `protobuf:"varint,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
+	FileToken     []byte                 `protobuf:"bytes,2,opt,name=file_token,json=fileToken,proto3" json:"file_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -777,6 +770,13 @@ func (x *UploadFileQueryResponse) GetFileId() int32 {
 		return x.FileId
 	}
 	return 0
+}
+
+func (x *UploadFileQueryResponse) GetFileToken() []byte {
+	if x != nil {
+		return x.FileToken
+	}
+	return nil
 }
 
 type UploadFileStatusRequest struct {
@@ -826,6 +826,7 @@ func (x *UploadFileStatusRequest) GetFileId() int32 {
 type UploadFileStatusResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BytesReceived int64                  `protobuf:"varint,1,opt,name=bytes_received,json=bytesReceived,proto3" json:"bytes_received,omitempty"`
+	FileToken     []byte                 `protobuf:"bytes,2,opt,name=file_token,json=fileToken,proto3" json:"file_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -867,9 +868,15 @@ func (x *UploadFileStatusResponse) GetBytesReceived() int64 {
 	return 0
 }
 
+func (x *UploadFileStatusResponse) GetFileToken() []byte {
+	if x != nil {
+		return x.FileToken
+	}
+	return nil
+}
+
 type DownloadFileRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	FileId        int32                  `protobuf:"varint,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
 	BytesWritten  int64                  `protobuf:"varint,3,opt,name=bytes_written,json=bytesWritten,proto3" json:"bytes_written,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -903,13 +910,6 @@ func (x *DownloadFileRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use DownloadFileRequest.ProtoReflect.Descriptor instead.
 func (*DownloadFileRequest) Descriptor() ([]byte, []int) {
 	return file_gophkeeper_proto_rawDescGZIP(), []int{15}
-}
-
-func (x *DownloadFileRequest) GetFileId() int32 {
-	if x != nil {
-		return x.FileId
-	}
-	return 0
 }
 
 func (x *DownloadFileRequest) GetBytesWritten() int64 {
@@ -1025,7 +1025,7 @@ func (x *DownloadFileQueryRequest) GetFileId() int32 {
 
 type DownloadFileQueryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	FileName      string                 `protobuf:"bytes,2,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`
+	FileToken     []byte                 `protobuf:"bytes,2,opt,name=file_token,json=fileToken,proto3" json:"file_token,omitempty"`
 	FileSize      int64                  `protobuf:"varint,3,opt,name=file_size,json=fileSize,proto3" json:"file_size,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1061,11 +1061,11 @@ func (*DownloadFileQueryResponse) Descriptor() ([]byte, []int) {
 	return file_gophkeeper_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *DownloadFileQueryResponse) GetFileName() string {
+func (x *DownloadFileQueryResponse) GetFileToken() []byte {
 	if x != nil {
-		return x.FileName
+		return x.FileToken
 	}
-	return ""
+	return nil
 }
 
 func (x *DownloadFileQueryResponse) GetFileSize() int64 {
@@ -1116,9 +1116,8 @@ const file_gophkeeper_proto_rawDesc = "" +
 	"\x13PullChangesResponse\x12=\n" +
 	"\x05items\x18\x01 \x03(\v2'.paulwwyvern.gophkeeper_proto.VaultItemR\x05items\x127\n" +
 	"\tsync_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\bsyncTime\x12\x19\n" +
-	"\bhas_more\x18\x03 \x01(\bR\ahasMore\"o\n" +
-	"\x0fUploadFileChunk\x12\x17\n" +
-	"\afile_id\x18\x01 \x01(\x05R\x06fileId\x12\x16\n" +
+	"\bhas_more\x18\x03 \x01(\bR\ahasMore\"V\n" +
+	"\x0fUploadFileChunk\x12\x16\n" +
 	"\x06offset\x18\x02 \x01(\x03R\x06offset\x12\x12\n" +
 	"\x04data\x18\x03 \x01(\fR\x04data\x12\x17\n" +
 	"\ais_last\x18\x04 \x01(\bR\x06isLast\"m\n" +
@@ -1128,24 +1127,28 @@ const file_gophkeeper_proto_rawDesc = "" +
 	"\rbytes_written\x18\x03 \x01(\x03R\fbytesWritten\"R\n" +
 	"\x16UploadFileQueryRequest\x12\x1b\n" +
 	"\tfile_name\x18\x02 \x01(\tR\bfileName\x12\x1b\n" +
-	"\tfile_size\x18\x03 \x01(\x03R\bfileSize\"2\n" +
+	"\tfile_size\x18\x03 \x01(\x03R\bfileSize\"Q\n" +
 	"\x17UploadFileQueryResponse\x12\x17\n" +
-	"\afile_id\x18\x01 \x01(\x05R\x06fileId\"2\n" +
+	"\afile_id\x18\x01 \x01(\x05R\x06fileId\x12\x1d\n" +
+	"\n" +
+	"file_token\x18\x02 \x01(\fR\tfileToken\"2\n" +
 	"\x17UploadFileStatusRequest\x12\x17\n" +
-	"\afile_id\x18\x01 \x01(\x05R\x06fileId\"A\n" +
+	"\afile_id\x18\x01 \x01(\x05R\x06fileId\"`\n" +
 	"\x18UploadFileStatusResponse\x12%\n" +
-	"\x0ebytes_received\x18\x01 \x01(\x03R\rbytesReceived\"S\n" +
-	"\x13DownloadFileRequest\x12\x17\n" +
-	"\afile_id\x18\x01 \x01(\x05R\x06fileId\x12#\n" +
+	"\x0ebytes_received\x18\x01 \x01(\x03R\rbytesReceived\x12\x1d\n" +
+	"\n" +
+	"file_token\x18\x02 \x01(\fR\tfileToken\":\n" +
+	"\x13DownloadFileRequest\x12#\n" +
 	"\rbytes_written\x18\x03 \x01(\x03R\fbytesWritten\"X\n" +
 	"\x11DownloadFileChunk\x12\x16\n" +
 	"\x06offset\x18\x02 \x01(\x03R\x06offset\x12\x12\n" +
 	"\x04data\x18\x03 \x01(\fR\x04data\x12\x17\n" +
 	"\ais_last\x18\x04 \x01(\bR\x06isLast\"3\n" +
 	"\x18DownloadFileQueryRequest\x12\x17\n" +
-	"\afile_id\x18\x01 \x01(\x05R\x06fileId\"U\n" +
-	"\x19DownloadFileQueryResponse\x12\x1b\n" +
-	"\tfile_name\x18\x02 \x01(\tR\bfileName\x12\x1b\n" +
+	"\afile_id\x18\x01 \x01(\x05R\x06fileId\"W\n" +
+	"\x19DownloadFileQueryResponse\x12\x1d\n" +
+	"\n" +
+	"file_token\x18\x02 \x01(\fR\tfileToken\x12\x1b\n" +
 	"\tfile_size\x18\x03 \x01(\x03R\bfileSize2\xec\b\n" +
 	"\x11GophkeeperService\x12o\n" +
 	"\n" +

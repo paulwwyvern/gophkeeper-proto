@@ -13,14 +13,14 @@ service GophkeeperService {
 
   // методы защищённые auth middleware
   rpc GetUser(google.protobuf.Empty) returns (User);
-  rpc PushChanges(PushChangesRequest) returns (PushChangesResponse);
+  rpc PushChanges(PushChangesRequest) returns (google.protobuf.Empty);
   rpc PullChanges(PullChangesRequest) returns (PullChangesResponse);
 
   rpc UploadFileQuery(UploadFileQueryRequest) returns (UploadFileQueryResponse);
   rpc UploadFileStatus(UploadFileStatusRequest) returns (UploadFileStatusResponse);
   rpc UploadFile(stream UploadFileChunk) returns (UploadFileResponse);
 
-  rpc DownloadFileQuery(UploadFileQueryRequest) returns (DownloadFileQueryResponse);
+  rpc DownloadFileQuery(DownloadFileQueryRequest) returns (DownloadFileQueryResponse);
   rpc DownloadFile(DownloadFileRequest) returns (stream DownloadFileChunk);
 }
 
@@ -28,7 +28,6 @@ service GophkeeperService {
 message User {
   string login = 1;
   bytes salt = 2;
-  bytes auth_key = 3;
   bytes vaultKey = 4;
   bytes vaultKey_nonce = 5;
 }
@@ -47,6 +46,12 @@ message VaultItem {
 }
 
 
+message CreateUserRequest {
+  User user = 1;
+  bytes auth_key = 2;
+}
+
+
 message CreateUserResponse {
   int32 id = 1;
 }
@@ -58,14 +63,11 @@ message LoginRequest {
 
 message LoginResponse {
   bytes token = 1;
+  User user = 2;
 }
 
 message PushChangesRequest {
   repeated VaultItem items = 1;
-}
-
-message PushChangesResponse {
-  google.protobuf.Timestamp sync_time = 1;
 }
 
 message PullChangesRequest {
@@ -76,13 +78,14 @@ message PullChangesRequest {
 
 message PullChangesResponse {
   repeated VaultItem items = 1;
+  google.protobuf.Timestamp sync_time = 2;
 
   bool has_more = 3;
 }
 
 
 message UploadFileChunk {
-  int64 file_id = 1;
+  int32 file_id = 1;
   int64 offset = 2;
   bytes data = 3;
   bool is_last = 4;

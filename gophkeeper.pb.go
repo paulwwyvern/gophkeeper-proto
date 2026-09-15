@@ -25,8 +25,9 @@ const (
 
 type User struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Login         string                 `protobuf:"bytes,1,opt,name=login,proto3" json:"login,omitempty"`
-	Salt          []byte                 `protobuf:"bytes,2,opt,name=salt,proto3" json:"salt,omitempty"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Login         string                 `protobuf:"bytes,2,opt,name=login,proto3" json:"login,omitempty"`
+	Salt          []byte                 `protobuf:"bytes,3,opt,name=salt,proto3" json:"salt,omitempty"`
 	VaultKey      []byte                 `protobuf:"bytes,4,opt,name=vaultKey,proto3" json:"vaultKey,omitempty"`
 	VaultKeyNonce []byte                 `protobuf:"bytes,5,opt,name=vaultKey_nonce,json=vaultKeyNonce,proto3" json:"vaultKey_nonce,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -61,6 +62,13 @@ func (x *User) ProtoReflect() protoreflect.Message {
 // Deprecated: Use User.ProtoReflect.Descriptor instead.
 func (*User) Descriptor() ([]byte, []int) {
 	return file_gophkeeper_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *User) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
 }
 
 func (x *User) GetLogin() string {
@@ -349,7 +357,7 @@ func (x *LoginRequest) GetDeviceId() []byte {
 
 type LoginResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Token         []byte                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	User          *User                  `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -385,11 +393,11 @@ func (*LoginResponse) Descriptor() ([]byte, []int) {
 	return file_gophkeeper_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *LoginResponse) GetToken() []byte {
+func (x *LoginResponse) GetToken() string {
 	if x != nil {
 		return x.Token
 	}
-	return nil
+	return ""
 }
 
 func (x *LoginResponse) GetUser() *User {
@@ -730,7 +738,7 @@ func (x *UploadFileQueryRequest) GetFileSize() int64 {
 type UploadFileQueryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	FileId        int32                  `protobuf:"varint,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
-	FileToken     []byte                 `protobuf:"bytes,2,opt,name=file_token,json=fileToken,proto3" json:"file_token,omitempty"`
+	FileToken     string                 `protobuf:"bytes,2,opt,name=file_token,json=fileToken,proto3" json:"file_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -772,11 +780,11 @@ func (x *UploadFileQueryResponse) GetFileId() int32 {
 	return 0
 }
 
-func (x *UploadFileQueryResponse) GetFileToken() []byte {
+func (x *UploadFileQueryResponse) GetFileToken() string {
 	if x != nil {
 		return x.FileToken
 	}
-	return nil
+	return ""
 }
 
 type UploadFileStatusRequest struct {
@@ -826,7 +834,7 @@ func (x *UploadFileStatusRequest) GetFileId() int32 {
 type UploadFileStatusResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BytesReceived int64                  `protobuf:"varint,1,opt,name=bytes_received,json=bytesReceived,proto3" json:"bytes_received,omitempty"`
-	FileToken     []byte                 `protobuf:"bytes,2,opt,name=file_token,json=fileToken,proto3" json:"file_token,omitempty"`
+	FileToken     string                 `protobuf:"bytes,2,opt,name=file_token,json=fileToken,proto3" json:"file_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -868,11 +876,11 @@ func (x *UploadFileStatusResponse) GetBytesReceived() int64 {
 	return 0
 }
 
-func (x *UploadFileStatusResponse) GetFileToken() []byte {
+func (x *UploadFileStatusResponse) GetFileToken() string {
 	if x != nil {
 		return x.FileToken
 	}
-	return nil
+	return ""
 }
 
 type DownloadFileRequest struct {
@@ -1025,7 +1033,7 @@ func (x *DownloadFileQueryRequest) GetFileId() int32 {
 
 type DownloadFileQueryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	FileToken     []byte                 `protobuf:"bytes,2,opt,name=file_token,json=fileToken,proto3" json:"file_token,omitempty"`
+	FileToken     string                 `protobuf:"bytes,2,opt,name=file_token,json=fileToken,proto3" json:"file_token,omitempty"`
 	FileSize      int64                  `protobuf:"varint,3,opt,name=file_size,json=fileSize,proto3" json:"file_size,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1061,11 +1069,11 @@ func (*DownloadFileQueryResponse) Descriptor() ([]byte, []int) {
 	return file_gophkeeper_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *DownloadFileQueryResponse) GetFileToken() []byte {
+func (x *DownloadFileQueryResponse) GetFileToken() string {
 	if x != nil {
 		return x.FileToken
 	}
-	return nil
+	return ""
 }
 
 func (x *DownloadFileQueryResponse) GetFileSize() int64 {
@@ -1079,10 +1087,11 @@ var File_gophkeeper_proto protoreflect.FileDescriptor
 
 const file_gophkeeper_proto_rawDesc = "" +
 	"\n" +
-	"\x10gophkeeper.proto\x12\x1cpaulwwyvern.gophkeeper_proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"s\n" +
-	"\x04User\x12\x14\n" +
-	"\x05login\x18\x01 \x01(\tR\x05login\x12\x12\n" +
-	"\x04salt\x18\x02 \x01(\fR\x04salt\x12\x1a\n" +
+	"\x10gophkeeper.proto\x12\x1cpaulwwyvern.gophkeeper_proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x83\x01\n" +
+	"\x04User\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x14\n" +
+	"\x05login\x18\x02 \x01(\tR\x05login\x12\x12\n" +
+	"\x04salt\x18\x03 \x01(\fR\x04salt\x12\x1a\n" +
 	"\bvaultKey\x18\x04 \x01(\fR\bvaultKey\x12%\n" +
 	"\x0evaultKey_nonce\x18\x05 \x01(\fR\rvaultKeyNonce\"\xa6\x02\n" +
 	"\tVaultItem\x12\x0e\n" +
@@ -1106,7 +1115,7 @@ const file_gophkeeper_proto_rawDesc = "" +
 	"\aauthKey\x18\x02 \x01(\fR\aauthKey\x12\x1b\n" +
 	"\tdevice_id\x18\x03 \x01(\fR\bdeviceId\"]\n" +
 	"\rLoginResponse\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\fR\x05token\x126\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\x126\n" +
 	"\x04user\x18\x02 \x01(\v2\".paulwwyvern.gophkeeper_proto.UserR\x04user\"S\n" +
 	"\x12PushChangesRequest\x12=\n" +
 	"\x05items\x18\x01 \x03(\v2'.paulwwyvern.gophkeeper_proto.VaultItemR\x05items\"n\n" +
@@ -1131,13 +1140,13 @@ const file_gophkeeper_proto_rawDesc = "" +
 	"\x17UploadFileQueryResponse\x12\x17\n" +
 	"\afile_id\x18\x01 \x01(\x05R\x06fileId\x12\x1d\n" +
 	"\n" +
-	"file_token\x18\x02 \x01(\fR\tfileToken\"2\n" +
+	"file_token\x18\x02 \x01(\tR\tfileToken\"2\n" +
 	"\x17UploadFileStatusRequest\x12\x17\n" +
 	"\afile_id\x18\x01 \x01(\x05R\x06fileId\"`\n" +
 	"\x18UploadFileStatusResponse\x12%\n" +
 	"\x0ebytes_received\x18\x01 \x01(\x03R\rbytesReceived\x12\x1d\n" +
 	"\n" +
-	"file_token\x18\x02 \x01(\fR\tfileToken\":\n" +
+	"file_token\x18\x02 \x01(\tR\tfileToken\":\n" +
 	"\x13DownloadFileRequest\x12#\n" +
 	"\rbytes_written\x18\x03 \x01(\x03R\fbytesWritten\"X\n" +
 	"\x11DownloadFileChunk\x12\x16\n" +
@@ -1148,7 +1157,7 @@ const file_gophkeeper_proto_rawDesc = "" +
 	"\afile_id\x18\x01 \x01(\x05R\x06fileId\"W\n" +
 	"\x19DownloadFileQueryResponse\x12\x1d\n" +
 	"\n" +
-	"file_token\x18\x02 \x01(\fR\tfileToken\x12\x1b\n" +
+	"file_token\x18\x02 \x01(\tR\tfileToken\x12\x1b\n" +
 	"\tfile_size\x18\x03 \x01(\x03R\bfileSize2\xec\b\n" +
 	"\x11GophkeeperService\x12o\n" +
 	"\n" +

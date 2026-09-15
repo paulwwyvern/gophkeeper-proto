@@ -26,8 +26,9 @@ service GophkeeperService {
 
 
 message User {
-  string login = 1;
-  bytes salt = 2;
+  int32 id = 1;
+  string login = 2;
+  bytes salt = 3;
   bytes vaultKey = 4;
   bytes vaultKey_nonce = 5;
 }
@@ -63,7 +64,7 @@ message LoginRequest {
 }
 
 message LoginResponse {
-  bytes token = 1;
+  string token = 1;
   User user = 2;
 }
 
@@ -108,7 +109,7 @@ message UploadFileQueryRequest {
 message UploadFileQueryResponse {
   int32 file_id = 1;
 
-  bytes file_token = 2;
+  string file_token = 2;
 }
 
 message UploadFileStatusRequest {
@@ -118,7 +119,7 @@ message UploadFileStatusRequest {
 message UploadFileStatusResponse {
   int64 bytes_received = 1;
 
-  bytes file_token = 2;
+  string file_token = 2;
 }
 
 
@@ -140,7 +141,7 @@ message DownloadFileQueryRequest {
 }
 
 message DownloadFileQueryResponse {
-  bytes file_token = 2;
+  string file_token = 2;
 
   int64 file_size = 3;
 }

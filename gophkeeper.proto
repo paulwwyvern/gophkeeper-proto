@@ -10,6 +10,7 @@ option go_package = "github.com/paulwwyvern/gophkeeper-proto/";
 service GophkeeperService {
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
+  rpc GetSalt(GetSaltRequest) returns (GetSaltResponse);
 
   // методы защищённые auth middleware
   rpc GetUser(google.protobuf.Empty) returns (User);
@@ -67,6 +68,16 @@ message LoginResponse {
   string token = 1;
   User user = 2;
 }
+
+
+message GetSaltRequest {
+  string login = 1;
+}
+
+message GetSaltResponse {
+  bytes salt = 2;
+}
+
 
 message PushChangesRequest {
   repeated VaultItem items = 1;

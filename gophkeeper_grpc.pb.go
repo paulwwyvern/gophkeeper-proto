@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	GophkeeperService_CreateUser_FullMethodName        = "/paulwwyvern.gophkeeper_proto.GophkeeperService/CreateUser"
 	GophkeeperService_Login_FullMethodName             = "/paulwwyvern.gophkeeper_proto.GophkeeperService/Login"
+	GophkeeperService_GetSalt_FullMethodName           = "/paulwwyvern.gophkeeper_proto.GophkeeperService/GetSalt"
 	GophkeeperService_GetUser_FullMethodName           = "/paulwwyvern.gophkeeper_proto.GophkeeperService/GetUser"
 	GophkeeperService_PushChanges_FullMethodName       = "/paulwwyvern.gophkeeper_proto.GophkeeperService/PushChanges"
 	GophkeeperService_PullChanges_FullMethodName       = "/paulwwyvern.gophkeeper_proto.GophkeeperService/PullChanges"
@@ -38,6 +39,7 @@ const (
 type GophkeeperServiceClient interface {
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
+	GetSalt(ctx context.Context, in *GetSaltRequest, opts ...grpc.CallOption) (*GetSaltResponse, error)
 	// методы защищённые auth middleware
 	GetUser(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*User, error)
 	PushChanges(ctx context.Context, in *PushChangesRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -71,6 +73,16 @@ func (c *gophkeeperServiceClient) Login(ctx context.Context, in *LoginRequest, o
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LoginResponse)
 	err := c.cc.Invoke(ctx, GophkeeperService_Login_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gophkeeperServiceClient) GetSalt(ctx context.Context, in *GetSaltRequest, opts ...grpc.CallOption) (*GetSaltResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSaltResponse)
+	err := c.cc.Invoke(ctx, GophkeeperService_GetSalt_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -175,6 +187,7 @@ type GophkeeperService_DownloadFileClient = grpc.ServerStreamingClient[DownloadF
 type GophkeeperServiceServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
+	GetSalt(context.Context, *GetSaltRequest) (*GetSaltResponse, error)
 	// методы защищённые auth middleware
 	GetUser(context.Context, *emptypb.Empty) (*User, error)
 	PushChanges(context.Context, *PushChangesRequest) (*emptypb.Empty, error)
@@ -199,6 +212,9 @@ func (UnimplementedGophkeeperServiceServer) CreateUser(context.Context, *CreateU
 }
 func (UnimplementedGophkeeperServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedGophkeeperServiceServer) GetSalt(context.Context, *GetSaltRequest) (*GetSaltResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSalt not implemented")
 }
 func (UnimplementedGophkeeperServiceServer) GetUser(context.Context, *emptypb.Empty) (*User, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUser not implemented")
@@ -277,6 +293,24 @@ func _GophkeeperService_Login_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GophkeeperServiceServer).Login(ctx, req.(*LoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GophkeeperService_GetSalt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSaltRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GophkeeperServiceServer).GetSalt(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GophkeeperService_GetSalt_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GophkeeperServiceServer).GetSalt(ctx, req.(*GetSaltRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -421,6 +455,10 @@ var GophkeeperService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Login",
 			Handler:    _GophkeeperService_Login_Handler,
+		},
+		{
+			MethodName: "GetSalt",
+			Handler:    _GophkeeperService_GetSalt_Handler,
 		},
 		{
 			MethodName: "GetUser",

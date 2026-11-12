@@ -20,17 +20,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	GophkeeperService_CreateUser_FullMethodName        = "/paulwwyvern.gophkeeper_proto.GophkeeperService/CreateUser"
-	GophkeeperService_Login_FullMethodName             = "/paulwwyvern.gophkeeper_proto.GophkeeperService/Login"
-	GophkeeperService_GetSalt_FullMethodName           = "/paulwwyvern.gophkeeper_proto.GophkeeperService/GetSalt"
-	GophkeeperService_GetUser_FullMethodName           = "/paulwwyvern.gophkeeper_proto.GophkeeperService/GetUser"
-	GophkeeperService_PushChanges_FullMethodName       = "/paulwwyvern.gophkeeper_proto.GophkeeperService/PushChanges"
-	GophkeeperService_PullChanges_FullMethodName       = "/paulwwyvern.gophkeeper_proto.GophkeeperService/PullChanges"
-	GophkeeperService_UploadFileQuery_FullMethodName   = "/paulwwyvern.gophkeeper_proto.GophkeeperService/UploadFileQuery"
-	GophkeeperService_UploadFileStatus_FullMethodName  = "/paulwwyvern.gophkeeper_proto.GophkeeperService/UploadFileStatus"
-	GophkeeperService_UploadFile_FullMethodName        = "/paulwwyvern.gophkeeper_proto.GophkeeperService/UploadFile"
-	GophkeeperService_DownloadFileQuery_FullMethodName = "/paulwwyvern.gophkeeper_proto.GophkeeperService/DownloadFileQuery"
-	GophkeeperService_DownloadFile_FullMethodName      = "/paulwwyvern.gophkeeper_proto.GophkeeperService/DownloadFile"
+	GophkeeperService_CreateUser_FullMethodName   = "/paulwwyvern.gophkeeper_proto.GophkeeperService/CreateUser"
+	GophkeeperService_Login_FullMethodName        = "/paulwwyvern.gophkeeper_proto.GophkeeperService/Login"
+	GophkeeperService_GetSalt_FullMethodName      = "/paulwwyvern.gophkeeper_proto.GophkeeperService/GetSalt"
+	GophkeeperService_GetUser_FullMethodName      = "/paulwwyvern.gophkeeper_proto.GophkeeperService/GetUser"
+	GophkeeperService_PushChanges_FullMethodName  = "/paulwwyvern.gophkeeper_proto.GophkeeperService/PushChanges"
+	GophkeeperService_PullChanges_FullMethodName  = "/paulwwyvern.gophkeeper_proto.GophkeeperService/PullChanges"
+	GophkeeperService_UploadFile_FullMethodName   = "/paulwwyvern.gophkeeper_proto.GophkeeperService/UploadFile"
+	GophkeeperService_DownloadFile_FullMethodName = "/paulwwyvern.gophkeeper_proto.GophkeeperService/DownloadFile"
 )
 
 // GophkeeperServiceClient is the client API for GophkeeperService service.
@@ -44,11 +41,8 @@ type GophkeeperServiceClient interface {
 	GetUser(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*User, error)
 	PushChanges(ctx context.Context, in *PushChangesRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	PullChanges(ctx context.Context, in *PullChangesRequest, opts ...grpc.CallOption) (*PullChangesResponse, error)
-	UploadFileQuery(ctx context.Context, in *UploadFileQueryRequest, opts ...grpc.CallOption) (*UploadFileQueryResponse, error)
-	UploadFileStatus(ctx context.Context, in *UploadFileStatusRequest, opts ...grpc.CallOption) (*UploadFileStatusResponse, error)
-	UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadFileChunk, UploadFileResponse], error)
-	DownloadFileQuery(ctx context.Context, in *DownloadFileQueryRequest, opts ...grpc.CallOption) (*DownloadFileQueryResponse, error)
-	DownloadFile(ctx context.Context, in *DownloadFileRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadFileChunk], error)
+	UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadFileRequest, UploadFileResponse], error)
+	DownloadFile(ctx context.Context, in *DownloadFileRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadFileResponse], error)
 }
 
 type gophkeeperServiceClient struct {
@@ -119,56 +113,26 @@ func (c *gophkeeperServiceClient) PullChanges(ctx context.Context, in *PullChang
 	return out, nil
 }
 
-func (c *gophkeeperServiceClient) UploadFileQuery(ctx context.Context, in *UploadFileQueryRequest, opts ...grpc.CallOption) (*UploadFileQueryResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UploadFileQueryResponse)
-	err := c.cc.Invoke(ctx, GophkeeperService_UploadFileQuery_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *gophkeeperServiceClient) UploadFileStatus(ctx context.Context, in *UploadFileStatusRequest, opts ...grpc.CallOption) (*UploadFileStatusResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UploadFileStatusResponse)
-	err := c.cc.Invoke(ctx, GophkeeperService_UploadFileStatus_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *gophkeeperServiceClient) UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadFileChunk, UploadFileResponse], error) {
+func (c *gophkeeperServiceClient) UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadFileRequest, UploadFileResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &GophkeeperService_ServiceDesc.Streams[0], GophkeeperService_UploadFile_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[UploadFileChunk, UploadFileResponse]{ClientStream: stream}
+	x := &grpc.GenericClientStream[UploadFileRequest, UploadFileResponse]{ClientStream: stream}
 	return x, nil
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type GophkeeperService_UploadFileClient = grpc.ClientStreamingClient[UploadFileChunk, UploadFileResponse]
+type GophkeeperService_UploadFileClient = grpc.ClientStreamingClient[UploadFileRequest, UploadFileResponse]
 
-func (c *gophkeeperServiceClient) DownloadFileQuery(ctx context.Context, in *DownloadFileQueryRequest, opts ...grpc.CallOption) (*DownloadFileQueryResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DownloadFileQueryResponse)
-	err := c.cc.Invoke(ctx, GophkeeperService_DownloadFileQuery_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *gophkeeperServiceClient) DownloadFile(ctx context.Context, in *DownloadFileRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadFileChunk], error) {
+func (c *gophkeeperServiceClient) DownloadFile(ctx context.Context, in *DownloadFileRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[DownloadFileResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &GophkeeperService_ServiceDesc.Streams[1], GophkeeperService_DownloadFile_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[DownloadFileRequest, DownloadFileChunk]{ClientStream: stream}
+	x := &grpc.GenericClientStream[DownloadFileRequest, DownloadFileResponse]{ClientStream: stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -179,7 +143,7 @@ func (c *gophkeeperServiceClient) DownloadFile(ctx context.Context, in *Download
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type GophkeeperService_DownloadFileClient = grpc.ServerStreamingClient[DownloadFileChunk]
+type GophkeeperService_DownloadFileClient = grpc.ServerStreamingClient[DownloadFileResponse]
 
 // GophkeeperServiceServer is the server API for GophkeeperService service.
 // All implementations must embed UnimplementedGophkeeperServiceServer
@@ -192,11 +156,8 @@ type GophkeeperServiceServer interface {
 	GetUser(context.Context, *emptypb.Empty) (*User, error)
 	PushChanges(context.Context, *PushChangesRequest) (*emptypb.Empty, error)
 	PullChanges(context.Context, *PullChangesRequest) (*PullChangesResponse, error)
-	UploadFileQuery(context.Context, *UploadFileQueryRequest) (*UploadFileQueryResponse, error)
-	UploadFileStatus(context.Context, *UploadFileStatusRequest) (*UploadFileStatusResponse, error)
-	UploadFile(grpc.ClientStreamingServer[UploadFileChunk, UploadFileResponse]) error
-	DownloadFileQuery(context.Context, *DownloadFileQueryRequest) (*DownloadFileQueryResponse, error)
-	DownloadFile(*DownloadFileRequest, grpc.ServerStreamingServer[DownloadFileChunk]) error
+	UploadFile(grpc.ClientStreamingServer[UploadFileRequest, UploadFileResponse]) error
+	DownloadFile(*DownloadFileRequest, grpc.ServerStreamingServer[DownloadFileResponse]) error
 	mustEmbedUnimplementedGophkeeperServiceServer()
 }
 
@@ -225,19 +186,10 @@ func (UnimplementedGophkeeperServiceServer) PushChanges(context.Context, *PushCh
 func (UnimplementedGophkeeperServiceServer) PullChanges(context.Context, *PullChangesRequest) (*PullChangesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method PullChanges not implemented")
 }
-func (UnimplementedGophkeeperServiceServer) UploadFileQuery(context.Context, *UploadFileQueryRequest) (*UploadFileQueryResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UploadFileQuery not implemented")
-}
-func (UnimplementedGophkeeperServiceServer) UploadFileStatus(context.Context, *UploadFileStatusRequest) (*UploadFileStatusResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method UploadFileStatus not implemented")
-}
-func (UnimplementedGophkeeperServiceServer) UploadFile(grpc.ClientStreamingServer[UploadFileChunk, UploadFileResponse]) error {
+func (UnimplementedGophkeeperServiceServer) UploadFile(grpc.ClientStreamingServer[UploadFileRequest, UploadFileResponse]) error {
 	return status.Error(codes.Unimplemented, "method UploadFile not implemented")
 }
-func (UnimplementedGophkeeperServiceServer) DownloadFileQuery(context.Context, *DownloadFileQueryRequest) (*DownloadFileQueryResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method DownloadFileQuery not implemented")
-}
-func (UnimplementedGophkeeperServiceServer) DownloadFile(*DownloadFileRequest, grpc.ServerStreamingServer[DownloadFileChunk]) error {
+func (UnimplementedGophkeeperServiceServer) DownloadFile(*DownloadFileRequest, grpc.ServerStreamingServer[DownloadFileResponse]) error {
 	return status.Error(codes.Unimplemented, "method DownloadFile not implemented")
 }
 func (UnimplementedGophkeeperServiceServer) mustEmbedUnimplementedGophkeeperServiceServer() {}
@@ -369,77 +321,23 @@ func _GophkeeperService_PullChanges_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _GophkeeperService_UploadFileQuery_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UploadFileQueryRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GophkeeperServiceServer).UploadFileQuery(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: GophkeeperService_UploadFileQuery_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GophkeeperServiceServer).UploadFileQuery(ctx, req.(*UploadFileQueryRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _GophkeeperService_UploadFileStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UploadFileStatusRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GophkeeperServiceServer).UploadFileStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: GophkeeperService_UploadFileStatus_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GophkeeperServiceServer).UploadFileStatus(ctx, req.(*UploadFileStatusRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _GophkeeperService_UploadFile_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(GophkeeperServiceServer).UploadFile(&grpc.GenericServerStream[UploadFileChunk, UploadFileResponse]{ServerStream: stream})
+	return srv.(GophkeeperServiceServer).UploadFile(&grpc.GenericServerStream[UploadFileRequest, UploadFileResponse]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type GophkeeperService_UploadFileServer = grpc.ClientStreamingServer[UploadFileChunk, UploadFileResponse]
-
-func _GophkeeperService_DownloadFileQuery_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DownloadFileQueryRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GophkeeperServiceServer).DownloadFileQuery(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: GophkeeperService_DownloadFileQuery_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GophkeeperServiceServer).DownloadFileQuery(ctx, req.(*DownloadFileQueryRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
+type GophkeeperService_UploadFileServer = grpc.ClientStreamingServer[UploadFileRequest, UploadFileResponse]
 
 func _GophkeeperService_DownloadFile_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(DownloadFileRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(GophkeeperServiceServer).DownloadFile(m, &grpc.GenericServerStream[DownloadFileRequest, DownloadFileChunk]{ServerStream: stream})
+	return srv.(GophkeeperServiceServer).DownloadFile(m, &grpc.GenericServerStream[DownloadFileRequest, DownloadFileResponse]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type GophkeeperService_DownloadFileServer = grpc.ServerStreamingServer[DownloadFileChunk]
+type GophkeeperService_DownloadFileServer = grpc.ServerStreamingServer[DownloadFileResponse]
 
 // GophkeeperService_ServiceDesc is the grpc.ServiceDesc for GophkeeperService service.
 // It's only intended for direct use with grpc.RegisterService,
@@ -471,18 +369,6 @@ var GophkeeperService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PullChanges",
 			Handler:    _GophkeeperService_PullChanges_Handler,
-		},
-		{
-			MethodName: "UploadFileQuery",
-			Handler:    _GophkeeperService_UploadFileQuery_Handler,
-		},
-		{
-			MethodName: "UploadFileStatus",
-			Handler:    _GophkeeperService_UploadFileStatus_Handler,
-		},
-		{
-			MethodName: "DownloadFileQuery",
-			Handler:    _GophkeeperService_DownloadFileQuery_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

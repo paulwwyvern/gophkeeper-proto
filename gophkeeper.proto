@@ -17,12 +17,9 @@ service GophkeeperService {
   rpc PushChanges(PushChangesRequest) returns (google.protobuf.Empty);
   rpc PullChanges(PullChangesRequest) returns (PullChangesResponse);
 
-  rpc UploadFileQuery(UploadFileQueryRequest) returns (UploadFileQueryResponse);
-  rpc UploadFileStatus(UploadFileStatusRequest) returns (UploadFileStatusResponse);
-  rpc UploadFile(stream UploadFileChunk) returns (UploadFileResponse);
+    rpc UploadFile(stream UploadFileRequest) returns (UploadFileResponse);
 
-  rpc DownloadFileQuery(DownloadFileQueryRequest) returns (DownloadFileQueryResponse);
-  rpc DownloadFile(DownloadFileRequest) returns (stream DownloadFileChunk);
+  rpc DownloadFile(DownloadFileRequest) returns (stream DownloadFileResponse);
 }
 
 
@@ -45,6 +42,8 @@ message VaultItem {
 
   bytes encrypted_nonce = 8;
   bytes encrypted = 9;
+
+  bool is_deleted = 10;
 }
 
 
@@ -64,9 +63,8 @@ message LoginRequest {
   bytes device_id = 3;
 }
 
-message LoginResponse {
+message LoginResponse { 
   string token = 1;
-  User user = 2;
 }
 
 
@@ -97,62 +95,35 @@ message PullChangesResponse {
 }
 
 
-message UploadFileChunk {
-  int64 offset = 2;
-  bytes data = 3;
-  bool is_last = 4;
+message FileInfo {
+  int64 size = 2;
+}
+
+message FileChunk {
+  int64 offset = 1;
+  bytes data = 2;
+}
+
+message UploadFileRequest {
+  oneof payload {
+    FileInfo info = 1;
+    FileChunk chunk = 2;
+  }
 }
 
 
 message UploadFileResponse {
-  bool success = 1;
-  string message = 2;
-  int64 bytes_written = 3;
-}
-
-
-message UploadFileQueryRequest {
-  string file_name = 2;
-
-  int64 file_size = 3;
-}
-
-message UploadFileQueryResponse {
   int32 file_id = 1;
-
-  string file_token = 2;
-}
-
-message UploadFileStatusRequest {
-  int32 file_id = 1;
-}
-
-message UploadFileStatusResponse {
-  int64 bytes_received = 1;
-
-  string file_token = 2;
 }
 
 
 message DownloadFileRequest {
-  int64 bytes_written = 3;
-}
-
-
-
-message DownloadFileChunk {
-  int64 offset = 2;
-  bytes data = 3;
-  bool is_last = 4;
-}
-
-
-message DownloadFileQueryRequest {
   int32 file_id = 1;
 }
 
-message DownloadFileQueryResponse {
-  string file_token = 2;
-
-  int64 file_size = 3;
+message DownloadFileResponse {
+  oneof payload {
+    FileInfo info = 1;
+    FileChunk chunk = 2;
+  }
 }

@@ -98,6 +98,7 @@ message PullChangesResponse {
 // Вся доступная инфа про файл
 message FileInfo {
   int64 size = 2;
+  string checksum_algo = 3;
 }
 
 // Сами данные
@@ -109,7 +110,6 @@ message FileChunk {
 // Контрольная сумма
 message FileChecksum {
   bytes checksum = 1;
-  string algo = 2;
 }
 
 

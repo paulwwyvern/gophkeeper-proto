@@ -655,6 +655,7 @@ func (x *PullChangesResponse) GetHasMore() bool {
 type FileInfo struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Size          int64                  `protobuf:"varint,2,opt,name=size,proto3" json:"size,omitempty"`
+	ChecksumAlgo  string                 `protobuf:"bytes,3,opt,name=checksum_algo,json=checksumAlgo,proto3" json:"checksum_algo,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -694,6 +695,13 @@ func (x *FileInfo) GetSize() int64 {
 		return x.Size
 	}
 	return 0
+}
+
+func (x *FileInfo) GetChecksumAlgo() string {
+	if x != nil {
+		return x.ChecksumAlgo
+	}
+	return ""
 }
 
 // Сами данные
@@ -753,7 +761,6 @@ func (x *FileChunk) GetData() []byte {
 type FileChecksum struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Checksum      []byte                 `protobuf:"bytes,1,opt,name=checksum,proto3" json:"checksum,omitempty"`
-	Algo          string                 `protobuf:"bytes,2,opt,name=algo,proto3" json:"algo,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -793,13 +800,6 @@ func (x *FileChecksum) GetChecksum() []byte {
 		return x.Checksum
 	}
 	return nil
-}
-
-func (x *FileChecksum) GetAlgo() string {
-	if x != nil {
-		return x.Algo
-	}
-	return ""
 }
 
 // Порядок оправки такой
@@ -1142,15 +1142,15 @@ const file_gophkeeper_proto_rawDesc = "" +
 	"\x13PullChangesResponse\x12=\n" +
 	"\x05items\x18\x01 \x03(\v2'.paulwwyvern.gophkeeper_proto.VaultItemR\x05items\x127\n" +
 	"\tsync_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\bsyncTime\x12\x19\n" +
-	"\bhas_more\x18\x03 \x01(\bR\ahasMore\"\x1e\n" +
+	"\bhas_more\x18\x03 \x01(\bR\ahasMore\"C\n" +
 	"\bFileInfo\x12\x12\n" +
-	"\x04size\x18\x02 \x01(\x03R\x04size\"7\n" +
+	"\x04size\x18\x02 \x01(\x03R\x04size\x12#\n" +
+	"\rchecksum_algo\x18\x03 \x01(\tR\fchecksumAlgo\"7\n" +
 	"\tFileChunk\x12\x16\n" +
 	"\x06offset\x18\x01 \x01(\x03R\x06offset\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\fR\x04data\">\n" +
+	"\x04data\x18\x02 \x01(\fR\x04data\"*\n" +
 	"\fFileChecksum\x12\x1a\n" +
-	"\bchecksum\x18\x01 \x01(\fR\bchecksum\x12\x12\n" +
-	"\x04algo\x18\x02 \x01(\tR\x04algo\"\xe7\x01\n" +
+	"\bchecksum\x18\x01 \x01(\fR\bchecksum\"\xe7\x01\n" +
 	"\x11UploadFileRequest\x12<\n" +
 	"\x04info\x18\x01 \x01(\v2&.paulwwyvern.gophkeeper_proto.FileInfoH\x00R\x04info\x12?\n" +
 	"\x05chunk\x18\x02 \x01(\v2'.paulwwyvern.gophkeeper_proto.FileChunkH\x00R\x05chunk\x12H\n" +

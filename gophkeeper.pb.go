@@ -653,9 +653,10 @@ func (x *PullChangesResponse) GetHasMore() bool {
 
 // Вся доступная инфа про файл
 type FileInfo struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Size          int64                  `protobuf:"varint,2,opt,name=size,proto3" json:"size,omitempty"`
-	ChecksumAlgo  string                 `protobuf:"bytes,3,opt,name=checksum_algo,json=checksumAlgo,proto3" json:"checksum_algo,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Size  int64                  `protobuf:"varint,2,opt,name=size,proto3" json:"size,omitempty"`
+	// данное поле игнорируется в DownloadFileResponse
+	ChecksumAlgo  string `protobuf:"bytes,3,opt,name=checksum_algo,json=checksumAlgo,proto3" json:"checksum_algo,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -951,6 +952,7 @@ func (x *UploadFileResponse) GetFileId() int32 {
 type DownloadFileRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	FileId        int32                  `protobuf:"varint,1,opt,name=file_id,json=fileId,proto3" json:"file_id,omitempty"`
+	ChecksumAlgo  string                 `protobuf:"bytes,3,opt,name=checksum_algo,json=checksumAlgo,proto3" json:"checksum_algo,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -990,6 +992,13 @@ func (x *DownloadFileRequest) GetFileId() int32 {
 		return x.FileId
 	}
 	return 0
+}
+
+func (x *DownloadFileRequest) GetChecksumAlgo() string {
+	if x != nil {
+		return x.ChecksumAlgo
+	}
+	return ""
 }
 
 // Порядок оправки такой
@@ -1157,9 +1166,10 @@ const file_gophkeeper_proto_rawDesc = "" +
 	"\bchecksum\x18\x03 \x01(\v2*.paulwwyvern.gophkeeper_proto.FileChecksumH\x00R\bchecksumB\t\n" +
 	"\apayload\"-\n" +
 	"\x12UploadFileResponse\x12\x17\n" +
-	"\afile_id\x18\x01 \x01(\x05R\x06fileId\".\n" +
+	"\afile_id\x18\x01 \x01(\x05R\x06fileId\"S\n" +
 	"\x13DownloadFileRequest\x12\x17\n" +
-	"\afile_id\x18\x01 \x01(\x05R\x06fileId\"\xea\x01\n" +
+	"\afile_id\x18\x01 \x01(\x05R\x06fileId\x12#\n" +
+	"\rchecksum_algo\x18\x03 \x01(\tR\fchecksumAlgo\"\xea\x01\n" +
 	"\x14DownloadFileResponse\x12<\n" +
 	"\x04info\x18\x01 \x01(\v2&.paulwwyvern.gophkeeper_proto.FileInfoH\x00R\x04info\x12?\n" +
 	"\x05chunk\x18\x02 \x01(\v2'.paulwwyvern.gophkeeper_proto.FileChunkH\x00R\x05chunk\x12H\n" +

@@ -98,6 +98,8 @@ message PullChangesResponse {
 // Вся доступная инфа про файл
 message FileInfo {
   int64 size = 2;
+
+  // данное поле игнорируется в DownloadFileResponse
   string checksum_algo = 3;
 }
 
@@ -134,6 +136,7 @@ message UploadFileResponse {
 
 message DownloadFileRequest {
   int32 file_id = 1;
+  string checksum_algo = 3;
 }
 
 // Порядок оправки такой

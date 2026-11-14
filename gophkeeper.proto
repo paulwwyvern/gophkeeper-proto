@@ -95,19 +95,34 @@ message PullChangesResponse {
 }
 
 
+// Вся доступная инфа про файл
 message FileInfo {
   int64 size = 2;
 }
 
+// Сами данные
 message FileChunk {
   int64 offset = 1;
   bytes data = 2;
 }
 
+// Контрольная сумма
+message FileChecksum {
+  bytes checksum = 1;
+  string algo = 2;
+}
+
+
+
+// Порядок оправки такой
+// 1) Ровно один message FileInfo
+// 2) Какое то количество FileChunk
+// 3) Ровно один FileChecksum
 message UploadFileRequest {
   oneof payload {
     FileInfo info = 1;
     FileChunk chunk = 2;
+    FileChecksum checksum = 3;
   }
 }
 
@@ -121,9 +136,14 @@ message DownloadFileRequest {
   int32 file_id = 1;
 }
 
+// Порядок оправки такой
+// 1) Ровно один message FileInfo
+// 2) Какое то количество FileChunk
+// 3) Ровно один FileChecksum
 message DownloadFileResponse {
   oneof payload {
     FileInfo info = 1;
     FileChunk chunk = 2;
+    FileChecksum checksum = 3;
   }
 }

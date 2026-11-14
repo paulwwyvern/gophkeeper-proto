@@ -651,6 +651,7 @@ func (x *PullChangesResponse) GetHasMore() bool {
 	return false
 }
 
+// Вся доступная инфа про файл
 type FileInfo struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Size          int64                  `protobuf:"varint,2,opt,name=size,proto3" json:"size,omitempty"`
@@ -695,6 +696,7 @@ func (x *FileInfo) GetSize() int64 {
 	return 0
 }
 
+// Сами данные
 type FileChunk struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Offset        int64                  `protobuf:"varint,1,opt,name=offset,proto3" json:"offset,omitempty"`
@@ -747,12 +749,70 @@ func (x *FileChunk) GetData() []byte {
 	return nil
 }
 
+// Контрольная сумма
+type FileChecksum struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Checksum      []byte                 `protobuf:"bytes,1,opt,name=checksum,proto3" json:"checksum,omitempty"`
+	Algo          string                 `protobuf:"bytes,2,opt,name=algo,proto3" json:"algo,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FileChecksum) Reset() {
+	*x = FileChecksum{}
+	mi := &file_gophkeeper_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FileChecksum) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FileChecksum) ProtoMessage() {}
+
+func (x *FileChecksum) ProtoReflect() protoreflect.Message {
+	mi := &file_gophkeeper_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FileChecksum.ProtoReflect.Descriptor instead.
+func (*FileChecksum) Descriptor() ([]byte, []int) {
+	return file_gophkeeper_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *FileChecksum) GetChecksum() []byte {
+	if x != nil {
+		return x.Checksum
+	}
+	return nil
+}
+
+func (x *FileChecksum) GetAlgo() string {
+	if x != nil {
+		return x.Algo
+	}
+	return ""
+}
+
+// Порядок оправки такой
+// 1) Ровно один message FileInfo
+// 2) Какое то количество FileChunk
+// 3) Ровно один FileChecksum
 type UploadFileRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Payload:
 	//
 	//	*UploadFileRequest_Info
 	//	*UploadFileRequest_Chunk
+	//	*UploadFileRequest_Checksum
 	Payload       isUploadFileRequest_Payload `protobuf_oneof:"payload"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -760,7 +820,7 @@ type UploadFileRequest struct {
 
 func (x *UploadFileRequest) Reset() {
 	*x = UploadFileRequest{}
-	mi := &file_gophkeeper_proto_msgTypes[13]
+	mi := &file_gophkeeper_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -772,7 +832,7 @@ func (x *UploadFileRequest) String() string {
 func (*UploadFileRequest) ProtoMessage() {}
 
 func (x *UploadFileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gophkeeper_proto_msgTypes[13]
+	mi := &file_gophkeeper_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -785,7 +845,7 @@ func (x *UploadFileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UploadFileRequest.ProtoReflect.Descriptor instead.
 func (*UploadFileRequest) Descriptor() ([]byte, []int) {
-	return file_gophkeeper_proto_rawDescGZIP(), []int{13}
+	return file_gophkeeper_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *UploadFileRequest) GetPayload() isUploadFileRequest_Payload {
@@ -813,6 +873,15 @@ func (x *UploadFileRequest) GetChunk() *FileChunk {
 	return nil
 }
 
+func (x *UploadFileRequest) GetChecksum() *FileChecksum {
+	if x != nil {
+		if x, ok := x.Payload.(*UploadFileRequest_Checksum); ok {
+			return x.Checksum
+		}
+	}
+	return nil
+}
+
 type isUploadFileRequest_Payload interface {
 	isUploadFileRequest_Payload()
 }
@@ -825,9 +894,15 @@ type UploadFileRequest_Chunk struct {
 	Chunk *FileChunk `protobuf:"bytes,2,opt,name=chunk,proto3,oneof"`
 }
 
+type UploadFileRequest_Checksum struct {
+	Checksum *FileChecksum `protobuf:"bytes,3,opt,name=checksum,proto3,oneof"`
+}
+
 func (*UploadFileRequest_Info) isUploadFileRequest_Payload() {}
 
 func (*UploadFileRequest_Chunk) isUploadFileRequest_Payload() {}
+
+func (*UploadFileRequest_Checksum) isUploadFileRequest_Payload() {}
 
 type UploadFileResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -838,7 +913,7 @@ type UploadFileResponse struct {
 
 func (x *UploadFileResponse) Reset() {
 	*x = UploadFileResponse{}
-	mi := &file_gophkeeper_proto_msgTypes[14]
+	mi := &file_gophkeeper_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -850,7 +925,7 @@ func (x *UploadFileResponse) String() string {
 func (*UploadFileResponse) ProtoMessage() {}
 
 func (x *UploadFileResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gophkeeper_proto_msgTypes[14]
+	mi := &file_gophkeeper_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -863,7 +938,7 @@ func (x *UploadFileResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UploadFileResponse.ProtoReflect.Descriptor instead.
 func (*UploadFileResponse) Descriptor() ([]byte, []int) {
-	return file_gophkeeper_proto_rawDescGZIP(), []int{14}
+	return file_gophkeeper_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *UploadFileResponse) GetFileId() int32 {
@@ -882,7 +957,7 @@ type DownloadFileRequest struct {
 
 func (x *DownloadFileRequest) Reset() {
 	*x = DownloadFileRequest{}
-	mi := &file_gophkeeper_proto_msgTypes[15]
+	mi := &file_gophkeeper_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -894,7 +969,7 @@ func (x *DownloadFileRequest) String() string {
 func (*DownloadFileRequest) ProtoMessage() {}
 
 func (x *DownloadFileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gophkeeper_proto_msgTypes[15]
+	mi := &file_gophkeeper_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -907,7 +982,7 @@ func (x *DownloadFileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DownloadFileRequest.ProtoReflect.Descriptor instead.
 func (*DownloadFileRequest) Descriptor() ([]byte, []int) {
-	return file_gophkeeper_proto_rawDescGZIP(), []int{15}
+	return file_gophkeeper_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *DownloadFileRequest) GetFileId() int32 {
@@ -917,12 +992,17 @@ func (x *DownloadFileRequest) GetFileId() int32 {
 	return 0
 }
 
+// Порядок оправки такой
+// 1) Ровно один message FileInfo
+// 2) Какое то количество FileChunk
+// 3) Ровно один FileChecksum
 type DownloadFileResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Payload:
 	//
 	//	*DownloadFileResponse_Info
 	//	*DownloadFileResponse_Chunk
+	//	*DownloadFileResponse_Checksum
 	Payload       isDownloadFileResponse_Payload `protobuf_oneof:"payload"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -930,7 +1010,7 @@ type DownloadFileResponse struct {
 
 func (x *DownloadFileResponse) Reset() {
 	*x = DownloadFileResponse{}
-	mi := &file_gophkeeper_proto_msgTypes[16]
+	mi := &file_gophkeeper_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -942,7 +1022,7 @@ func (x *DownloadFileResponse) String() string {
 func (*DownloadFileResponse) ProtoMessage() {}
 
 func (x *DownloadFileResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gophkeeper_proto_msgTypes[16]
+	mi := &file_gophkeeper_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -955,7 +1035,7 @@ func (x *DownloadFileResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DownloadFileResponse.ProtoReflect.Descriptor instead.
 func (*DownloadFileResponse) Descriptor() ([]byte, []int) {
-	return file_gophkeeper_proto_rawDescGZIP(), []int{16}
+	return file_gophkeeper_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *DownloadFileResponse) GetPayload() isDownloadFileResponse_Payload {
@@ -983,6 +1063,15 @@ func (x *DownloadFileResponse) GetChunk() *FileChunk {
 	return nil
 }
 
+func (x *DownloadFileResponse) GetChecksum() *FileChecksum {
+	if x != nil {
+		if x, ok := x.Payload.(*DownloadFileResponse_Checksum); ok {
+			return x.Checksum
+		}
+	}
+	return nil
+}
+
 type isDownloadFileResponse_Payload interface {
 	isDownloadFileResponse_Payload()
 }
@@ -995,9 +1084,15 @@ type DownloadFileResponse_Chunk struct {
 	Chunk *FileChunk `protobuf:"bytes,2,opt,name=chunk,proto3,oneof"`
 }
 
+type DownloadFileResponse_Checksum struct {
+	Checksum *FileChecksum `protobuf:"bytes,3,opt,name=checksum,proto3,oneof"`
+}
+
 func (*DownloadFileResponse_Info) isDownloadFileResponse_Payload() {}
 
 func (*DownloadFileResponse_Chunk) isDownloadFileResponse_Payload() {}
+
+func (*DownloadFileResponse_Checksum) isDownloadFileResponse_Payload() {}
 
 var File_gophkeeper_proto protoreflect.FileDescriptor
 
@@ -1052,18 +1147,23 @@ const file_gophkeeper_proto_rawDesc = "" +
 	"\x04size\x18\x02 \x01(\x03R\x04size\"7\n" +
 	"\tFileChunk\x12\x16\n" +
 	"\x06offset\x18\x01 \x01(\x03R\x06offset\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\fR\x04data\"\x9d\x01\n" +
+	"\x04data\x18\x02 \x01(\fR\x04data\">\n" +
+	"\fFileChecksum\x12\x1a\n" +
+	"\bchecksum\x18\x01 \x01(\fR\bchecksum\x12\x12\n" +
+	"\x04algo\x18\x02 \x01(\tR\x04algo\"\xe7\x01\n" +
 	"\x11UploadFileRequest\x12<\n" +
 	"\x04info\x18\x01 \x01(\v2&.paulwwyvern.gophkeeper_proto.FileInfoH\x00R\x04info\x12?\n" +
-	"\x05chunk\x18\x02 \x01(\v2'.paulwwyvern.gophkeeper_proto.FileChunkH\x00R\x05chunkB\t\n" +
+	"\x05chunk\x18\x02 \x01(\v2'.paulwwyvern.gophkeeper_proto.FileChunkH\x00R\x05chunk\x12H\n" +
+	"\bchecksum\x18\x03 \x01(\v2*.paulwwyvern.gophkeeper_proto.FileChecksumH\x00R\bchecksumB\t\n" +
 	"\apayload\"-\n" +
 	"\x12UploadFileResponse\x12\x17\n" +
 	"\afile_id\x18\x01 \x01(\x05R\x06fileId\".\n" +
 	"\x13DownloadFileRequest\x12\x17\n" +
-	"\afile_id\x18\x01 \x01(\x05R\x06fileId\"\xa0\x01\n" +
+	"\afile_id\x18\x01 \x01(\x05R\x06fileId\"\xea\x01\n" +
 	"\x14DownloadFileResponse\x12<\n" +
 	"\x04info\x18\x01 \x01(\v2&.paulwwyvern.gophkeeper_proto.FileInfoH\x00R\x04info\x12?\n" +
-	"\x05chunk\x18\x02 \x01(\v2'.paulwwyvern.gophkeeper_proto.FileChunkH\x00R\x05chunkB\t\n" +
+	"\x05chunk\x18\x02 \x01(\v2'.paulwwyvern.gophkeeper_proto.FileChunkH\x00R\x05chunk\x12H\n" +
+	"\bchecksum\x18\x03 \x01(\v2*.paulwwyvern.gophkeeper_proto.FileChecksumH\x00R\bchecksumB\t\n" +
 	"\apayload2\xce\x06\n" +
 	"\x11GophkeeperService\x12o\n" +
 	"\n" +
@@ -1089,7 +1189,7 @@ func file_gophkeeper_proto_rawDescGZIP() []byte {
 	return file_gophkeeper_proto_rawDescData
 }
 
-var file_gophkeeper_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_gophkeeper_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_gophkeeper_proto_goTypes = []any{
 	(*User)(nil),                  // 0: paulwwyvern.gophkeeper_proto.User
 	(*VaultItem)(nil),             // 1: paulwwyvern.gophkeeper_proto.VaultItem
@@ -1104,46 +1204,49 @@ var file_gophkeeper_proto_goTypes = []any{
 	(*PullChangesResponse)(nil),   // 10: paulwwyvern.gophkeeper_proto.PullChangesResponse
 	(*FileInfo)(nil),              // 11: paulwwyvern.gophkeeper_proto.FileInfo
 	(*FileChunk)(nil),             // 12: paulwwyvern.gophkeeper_proto.FileChunk
-	(*UploadFileRequest)(nil),     // 13: paulwwyvern.gophkeeper_proto.UploadFileRequest
-	(*UploadFileResponse)(nil),    // 14: paulwwyvern.gophkeeper_proto.UploadFileResponse
-	(*DownloadFileRequest)(nil),   // 15: paulwwyvern.gophkeeper_proto.DownloadFileRequest
-	(*DownloadFileResponse)(nil),  // 16: paulwwyvern.gophkeeper_proto.DownloadFileResponse
-	(*timestamppb.Timestamp)(nil), // 17: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),         // 18: google.protobuf.Empty
+	(*FileChecksum)(nil),          // 13: paulwwyvern.gophkeeper_proto.FileChecksum
+	(*UploadFileRequest)(nil),     // 14: paulwwyvern.gophkeeper_proto.UploadFileRequest
+	(*UploadFileResponse)(nil),    // 15: paulwwyvern.gophkeeper_proto.UploadFileResponse
+	(*DownloadFileRequest)(nil),   // 16: paulwwyvern.gophkeeper_proto.DownloadFileRequest
+	(*DownloadFileResponse)(nil),  // 17: paulwwyvern.gophkeeper_proto.DownloadFileResponse
+	(*timestamppb.Timestamp)(nil), // 18: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),         // 19: google.protobuf.Empty
 }
 var file_gophkeeper_proto_depIdxs = []int32{
-	17, // 0: paulwwyvern.gophkeeper_proto.VaultItem.created_at:type_name -> google.protobuf.Timestamp
-	17, // 1: paulwwyvern.gophkeeper_proto.VaultItem.updated_at:type_name -> google.protobuf.Timestamp
+	18, // 0: paulwwyvern.gophkeeper_proto.VaultItem.created_at:type_name -> google.protobuf.Timestamp
+	18, // 1: paulwwyvern.gophkeeper_proto.VaultItem.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 2: paulwwyvern.gophkeeper_proto.CreateUserRequest.user:type_name -> paulwwyvern.gophkeeper_proto.User
 	1,  // 3: paulwwyvern.gophkeeper_proto.PushChangesRequest.items:type_name -> paulwwyvern.gophkeeper_proto.VaultItem
-	17, // 4: paulwwyvern.gophkeeper_proto.PullChangesRequest.last_sync_time:type_name -> google.protobuf.Timestamp
+	18, // 4: paulwwyvern.gophkeeper_proto.PullChangesRequest.last_sync_time:type_name -> google.protobuf.Timestamp
 	1,  // 5: paulwwyvern.gophkeeper_proto.PullChangesResponse.items:type_name -> paulwwyvern.gophkeeper_proto.VaultItem
-	17, // 6: paulwwyvern.gophkeeper_proto.PullChangesResponse.sync_time:type_name -> google.protobuf.Timestamp
+	18, // 6: paulwwyvern.gophkeeper_proto.PullChangesResponse.sync_time:type_name -> google.protobuf.Timestamp
 	11, // 7: paulwwyvern.gophkeeper_proto.UploadFileRequest.info:type_name -> paulwwyvern.gophkeeper_proto.FileInfo
 	12, // 8: paulwwyvern.gophkeeper_proto.UploadFileRequest.chunk:type_name -> paulwwyvern.gophkeeper_proto.FileChunk
-	11, // 9: paulwwyvern.gophkeeper_proto.DownloadFileResponse.info:type_name -> paulwwyvern.gophkeeper_proto.FileInfo
-	12, // 10: paulwwyvern.gophkeeper_proto.DownloadFileResponse.chunk:type_name -> paulwwyvern.gophkeeper_proto.FileChunk
-	2,  // 11: paulwwyvern.gophkeeper_proto.GophkeeperService.CreateUser:input_type -> paulwwyvern.gophkeeper_proto.CreateUserRequest
-	4,  // 12: paulwwyvern.gophkeeper_proto.GophkeeperService.Login:input_type -> paulwwyvern.gophkeeper_proto.LoginRequest
-	6,  // 13: paulwwyvern.gophkeeper_proto.GophkeeperService.GetSalt:input_type -> paulwwyvern.gophkeeper_proto.GetSaltRequest
-	18, // 14: paulwwyvern.gophkeeper_proto.GophkeeperService.GetUser:input_type -> google.protobuf.Empty
-	8,  // 15: paulwwyvern.gophkeeper_proto.GophkeeperService.PushChanges:input_type -> paulwwyvern.gophkeeper_proto.PushChangesRequest
-	9,  // 16: paulwwyvern.gophkeeper_proto.GophkeeperService.PullChanges:input_type -> paulwwyvern.gophkeeper_proto.PullChangesRequest
-	13, // 17: paulwwyvern.gophkeeper_proto.GophkeeperService.UploadFile:input_type -> paulwwyvern.gophkeeper_proto.UploadFileRequest
-	15, // 18: paulwwyvern.gophkeeper_proto.GophkeeperService.DownloadFile:input_type -> paulwwyvern.gophkeeper_proto.DownloadFileRequest
-	3,  // 19: paulwwyvern.gophkeeper_proto.GophkeeperService.CreateUser:output_type -> paulwwyvern.gophkeeper_proto.CreateUserResponse
-	5,  // 20: paulwwyvern.gophkeeper_proto.GophkeeperService.Login:output_type -> paulwwyvern.gophkeeper_proto.LoginResponse
-	7,  // 21: paulwwyvern.gophkeeper_proto.GophkeeperService.GetSalt:output_type -> paulwwyvern.gophkeeper_proto.GetSaltResponse
-	0,  // 22: paulwwyvern.gophkeeper_proto.GophkeeperService.GetUser:output_type -> paulwwyvern.gophkeeper_proto.User
-	18, // 23: paulwwyvern.gophkeeper_proto.GophkeeperService.PushChanges:output_type -> google.protobuf.Empty
-	10, // 24: paulwwyvern.gophkeeper_proto.GophkeeperService.PullChanges:output_type -> paulwwyvern.gophkeeper_proto.PullChangesResponse
-	14, // 25: paulwwyvern.gophkeeper_proto.GophkeeperService.UploadFile:output_type -> paulwwyvern.gophkeeper_proto.UploadFileResponse
-	16, // 26: paulwwyvern.gophkeeper_proto.GophkeeperService.DownloadFile:output_type -> paulwwyvern.gophkeeper_proto.DownloadFileResponse
-	19, // [19:27] is the sub-list for method output_type
-	11, // [11:19] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	13, // 9: paulwwyvern.gophkeeper_proto.UploadFileRequest.checksum:type_name -> paulwwyvern.gophkeeper_proto.FileChecksum
+	11, // 10: paulwwyvern.gophkeeper_proto.DownloadFileResponse.info:type_name -> paulwwyvern.gophkeeper_proto.FileInfo
+	12, // 11: paulwwyvern.gophkeeper_proto.DownloadFileResponse.chunk:type_name -> paulwwyvern.gophkeeper_proto.FileChunk
+	13, // 12: paulwwyvern.gophkeeper_proto.DownloadFileResponse.checksum:type_name -> paulwwyvern.gophkeeper_proto.FileChecksum
+	2,  // 13: paulwwyvern.gophkeeper_proto.GophkeeperService.CreateUser:input_type -> paulwwyvern.gophkeeper_proto.CreateUserRequest
+	4,  // 14: paulwwyvern.gophkeeper_proto.GophkeeperService.Login:input_type -> paulwwyvern.gophkeeper_proto.LoginRequest
+	6,  // 15: paulwwyvern.gophkeeper_proto.GophkeeperService.GetSalt:input_type -> paulwwyvern.gophkeeper_proto.GetSaltRequest
+	19, // 16: paulwwyvern.gophkeeper_proto.GophkeeperService.GetUser:input_type -> google.protobuf.Empty
+	8,  // 17: paulwwyvern.gophkeeper_proto.GophkeeperService.PushChanges:input_type -> paulwwyvern.gophkeeper_proto.PushChangesRequest
+	9,  // 18: paulwwyvern.gophkeeper_proto.GophkeeperService.PullChanges:input_type -> paulwwyvern.gophkeeper_proto.PullChangesRequest
+	14, // 19: paulwwyvern.gophkeeper_proto.GophkeeperService.UploadFile:input_type -> paulwwyvern.gophkeeper_proto.UploadFileRequest
+	16, // 20: paulwwyvern.gophkeeper_proto.GophkeeperService.DownloadFile:input_type -> paulwwyvern.gophkeeper_proto.DownloadFileRequest
+	3,  // 21: paulwwyvern.gophkeeper_proto.GophkeeperService.CreateUser:output_type -> paulwwyvern.gophkeeper_proto.CreateUserResponse
+	5,  // 22: paulwwyvern.gophkeeper_proto.GophkeeperService.Login:output_type -> paulwwyvern.gophkeeper_proto.LoginResponse
+	7,  // 23: paulwwyvern.gophkeeper_proto.GophkeeperService.GetSalt:output_type -> paulwwyvern.gophkeeper_proto.GetSaltResponse
+	0,  // 24: paulwwyvern.gophkeeper_proto.GophkeeperService.GetUser:output_type -> paulwwyvern.gophkeeper_proto.User
+	19, // 25: paulwwyvern.gophkeeper_proto.GophkeeperService.PushChanges:output_type -> google.protobuf.Empty
+	10, // 26: paulwwyvern.gophkeeper_proto.GophkeeperService.PullChanges:output_type -> paulwwyvern.gophkeeper_proto.PullChangesResponse
+	15, // 27: paulwwyvern.gophkeeper_proto.GophkeeperService.UploadFile:output_type -> paulwwyvern.gophkeeper_proto.UploadFileResponse
+	17, // 28: paulwwyvern.gophkeeper_proto.GophkeeperService.DownloadFile:output_type -> paulwwyvern.gophkeeper_proto.DownloadFileResponse
+	21, // [21:29] is the sub-list for method output_type
+	13, // [13:21] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_gophkeeper_proto_init() }
@@ -1151,13 +1254,15 @@ func file_gophkeeper_proto_init() {
 	if File_gophkeeper_proto != nil {
 		return
 	}
-	file_gophkeeper_proto_msgTypes[13].OneofWrappers = []any{
+	file_gophkeeper_proto_msgTypes[14].OneofWrappers = []any{
 		(*UploadFileRequest_Info)(nil),
 		(*UploadFileRequest_Chunk)(nil),
+		(*UploadFileRequest_Checksum)(nil),
 	}
-	file_gophkeeper_proto_msgTypes[16].OneofWrappers = []any{
+	file_gophkeeper_proto_msgTypes[17].OneofWrappers = []any{
 		(*DownloadFileResponse_Info)(nil),
 		(*DownloadFileResponse_Chunk)(nil),
+		(*DownloadFileResponse_Checksum)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -1165,7 +1270,7 @@ func file_gophkeeper_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gophkeeper_proto_rawDesc), len(file_gophkeeper_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   17,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
